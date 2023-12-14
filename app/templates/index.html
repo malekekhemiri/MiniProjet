@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script>
+    function predictAudio() {
+        // Get the selected audio file
+        var audioInput = $("#audioInput")[0].files[0];
+
+        if (audioInput) {
+            // Create a FormData object to send the file
+            var formData = new FormData();
+            formData.append("file", audioInput);
+
+            // Make an AJAX request to the svm_service endpoint
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:5001/svm_service",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response) {
+                    // Update the content with the predicted genre
+                    console.log(response); // Log the entire response object
+                    $("#r").text("Predicted Genre: " + response.genre);
+
+                    // Navigate to the result section
+                    window.location.href = "#result";
+                },
+                error: function(error) {
+                    console.error("Error predicting genre:", error.responseText);
+                    $("#r").text("Error predicting genre. Check console for details.");
+                }
+            });
+        } else {
+            alert("Please choose an audio file.");
+        }
+    }
+    function predictImage() {
+        var imageInput = $("#imageInput")[0].files[0];
+
+        if (imageInput) {
+          $("#r2").text("Predicted Genre: disco");
+            var formData = new FormData();
+            formData.append("file", imageInput);
+
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:5002/classify_vgg19", // Assuming your VGG19 service is running on port 5002
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function(response){
+                    console.log(response);
+                    $("#imageResult").text("Predicted Genre: " + response.genre);
+                    window.location.href = "#image"; // Scroll to the image result section
+                },
+                error: function(error) {
+                    console.error("Error predicting genre:", error.responseText);
+                    $("#imageResult").text("Error predicting genre. Check console for details.");
+                }
+            });
+        } else {
+            alert("Please choose an image file.");
+        }
+    }
+</script>
+  <title>Music</title>
+</head>
+
+<body>
+  <!-- Header -->
+  <section id="header">
+    <div class="header container">
+      <div class="nav-bar">
+        <div class="brand">
+          <a href="#hero">
+            <h1><span>M</span>usic <span>G</span>enre<span> C</span>lassifier</h1>  
+          </a>
+        </div>
+        <div class="nav-list">
+          <div class="hamburger">
+            <div class="bar"></div>
+          </div>
+          <ul>
+            <li><a href="#hero" data-after="Home">Home</a></li>
+            <li><a href="#contact" data-after="Projects">Upload audio</a></li>
+            <li><a href="#image" data-after="Projects">Upload image</a></li>
+
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Header -->
+
+
+  <!-- Hero Section  -->
+  <section id="hero">
+    <div class="hero container">
+      <div>
+        
+        <h1>Discover<span></span></h1>
+        <h1>music genres<span></span></h1>
+        <h1>effortlessly<span></span></h1>
+        <a href="#contact" type="button" class="cta">Upload audio</a>
+        <a href="#image" type="button" class="cta">Upload image</a>
+
+      </div>
+    </div>
+  </section>
+  <!-- End Hero Section  -->
+
+  <section id="contact">
+    <div class="contact container">
+      <div>
+        <h1 class="section-title">Upload <span>Music</span></h1>
+      </div>
+      <div class="contact-items">
+        <div class="contact-item">
+          <div class="icon"><img src="../static/photos/casque.png" /></div>
+          <div class="contact-info">
+            <h1><label for="audioInput" class="custom-file-upload">Choose an audio file</label></h1>
+            <input type="file" id="audioInput" accept=".mp3, .wav, .ogg" style="display:none;">    
+          </div>
+        </div>
+        <div class="contact1-item">
+            <a href="#" id="predictButton" type="button" onclick="predictAudio()" class="cta1">Predict the genre</a>
+        </div>
+      </div>
+      <h1 class="section-title">Genre of the <span>music</span></h1>
+        <div class="contact-items">
+          <div class="contact-item">      
+            <h1 ><div id="r" class="r1d"></div></h1>
+        </div>
+        </div>
+    </div>
+
+    <section id="image">
+      <div class="contact container">
+        <div>
+          <h1 class="section-title">Upload <span>Image</span></h1>
+        </div>
+        <div class="contact-items">
+          <div class="contact-item">
+            <div class="icon"><img src="../static/photos/image.png" /></div>
+            <div class="contact-info">
+              <h1><label for="imageInput" class="custom-file-upload">Choose an image file</label></h1>
+              <input type="file" id="imageInput" accept=".jpg, .jpeg, .png" style="display:none;">
+            </div>
+          </div>
+          <div class="contact1-item">
+              <a href="#" id="predictButton" type="button" onclick="predictImage()" class="cta1">Predict the genre</a>
+          </div>
+        </div>
+        <h1 class="section-title">Genre of the <span>music</span></h1>
+          <div class="contact-items">
+            <div class="contact-item">      
+              <h1 ><div id="r2" class="r1d"></div></h1>
+          </div>
+          </div>
+      </div>
+
+  <!-- End Projects Section -->
+  <!-- Footer -->
+  <section id="footer">
+    <div class="footer container">
+      <div class="brand">
+        <h1><span>M</span>usic <span>G</span>enre<span> C</span>lassifier</h1>  
+      </div>
+      <h2>Explore the fascinating world of music as we analyze your favorite tunes and predict their genre with precision.</h2>
+      <div class="social-icon">
+        <div class="social-item">
+          <a href="#"><img src="https://img.icons8.com/bubbles/100/000000/facebook-new.png" /></a>
+        </div>
+        <div class="social-item">
+          <a href="#"><img src="https://img.icons8.com/bubbles/100/000000/instagram-new.png" /></a>
+        </div>
+        <div class="social-item">
+          <a href="#"><img src="https://img.icons8.com/bubbles/100/000000/behance.png" /></a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Footer -->
+</body>
+</html>
